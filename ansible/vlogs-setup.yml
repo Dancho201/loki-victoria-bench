@@ -8,16 +8,16 @@
     victorialogs_version: 0.25.0
     victorialogs_install_dir: /usr/local/bin/
     victorialogs_service_file: /etc/systemd/system/victorialogs.service
-    victorialogs_storage_path: /mnt/logs/
-    
+    victorialogs_storage_path: /mnt/logs
+
   tasks:
     - name: Create victorialogs group
-      group:
+      ansible.builtin.group:
         name: "{{ victorialogs_group }}"
         system: yes
 
     - name: Create victorialogs user
-      user:
+      ansible.builtin.user:
         name: "{{ victorialogs_user }}"
         system: yes
         group: "{{ victorialogs_group }}"
@@ -26,48 +26,50 @@
         create_home: no
 
     - name: Download victoria-logs tar.gz
-      get_url:
+      ansible.builtin.get_url:
         url: "https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v{{ victorialogs_version }}-victorialogs/victoria-logs-linux-amd64-v{{ victorialogs_version }}-victorialogs.tar.gz"
         dest: "/tmp/victoria-logs-linux-amd64-v{{ victorialogs_version }}-victorialogs.tar.gz"
 
     - name: Extract victoria-logs tar.gz
-      unarchive:
+      ansible.builtin.unarchive:
         src: "/tmp/victoria-logs-linux-amd64-v{{ victorialogs_version }}-victorialogs.tar.gz"
         dest: "{{ victorialogs_install_dir }}"
         remote_src: yes
 
     - name: Ensure victoria-logs binary is executable
-      file:
-        path: "{{ victorialogs_install_dir }}"
+      ansible.builtin.file:
+        path: "{{ victorialogs_install_dir }}/victoria-logs-prod"
         mode: '0755'
 
     - name: Create victorialogs service file from template
-      template:
+      ansible.builtin.template:
         src: templates/vlogs-systemd.j2
         dest: "{{ victorialogs_service_file }}"
 
     - name: Reload systemd daemon
-      systemd:
+      ansible.builtin.systemd:
         daemon_reload: yes
 
+    - name: Enable victorialogs service
+      ansible.builtin.systemd:
+        name: victorialogs
+        enabled: yes
+
     - name: Start victorialogs service
-      service:
+      ansible.builtin.systemd:
         name: victorialogs
         state: started
 
-    - name: Enable victorialogs service
-      service:
-        name: victorialogs
-        enabled: yes
-    
     - name: Change ownership of log storage
-      become: yes
-      become_user: root
-      command: chown -R {{ victorialogs_user }}:{{ victorialogs_group }} {{ victorialogs_storage_path }}
+      ansible.builtin.file:
+        path: "{{ victorialogs_storage_path }}"
+        owner: "{{ victorialogs_user }}"
+        group: "{{ victorialogs_group }}"
+        recurse: yes
 
   handlers:
     - name: restart victorialogs
-      service:
+      ansible.builtin.systemd:
         name: victorialogs
         state: restarted
         enabled: yes
