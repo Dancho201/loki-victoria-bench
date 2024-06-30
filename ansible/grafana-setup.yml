@@ -35,14 +35,14 @@
         path: /var/lib/grafana/plugins
         state: directory
   
-    - name: Download victorialogs-datasource plugin tarball
+    - name: Download victorialogs-datasource plugin t
       get_url:
         url: "https://github.com/VictoriaMetrics/victorialogs-datasource/releases/download/v{{ victorialogs_datasource_version }}/victorialogs-datasource-v{{ victorialogs_datasource_version }}.tar.gz"
-        dest: "/etc/grafana/plugins/victorialogs-datasource-v{{ victorialogs_datasource_version }}.tar.gz"
+        dest: "/var/lib/grafana/plugins/victorialogs-datasource-v{{ victorialogs_datasource_version }}.tar.gz"
 
     - name: Extract victorialogs-datasource plugin
       unarchive:
-        src: "/etc/grafana/plugins/victorialogs-datasource-v{{ victorialogs_datasource_version }}.tar.gz"
+        src: "/var/lib/grafana/plugins/victorialogs-datasource-v{{ victorialogs_datasource_version }}.tar.gz"
         dest: "/var/lib/grafana/plugins"
         remote_src: yes
         creates: "/var/lib/grafana/plugins/victorialogs-datasource"
