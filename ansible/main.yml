@@ -2,4 +2,5 @@
 - import_playbook: vlogs-setup.yml
 - import_playbook: grafana-setup.yml
 - import_playbook: promtail-setup.yml
+- import_playbook: victoriametrics-setup.yml
 ####

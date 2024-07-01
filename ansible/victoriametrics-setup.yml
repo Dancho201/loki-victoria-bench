@@ -1,0 +1,72 @@
+---
+- name: install VictoriaMetrics
+  hosts: vlogs-bench
+  become: yes
+  vars:
+    vmetrics_version: 1.82.1
+
+  tasks:
+
+    - name: Check if victoriametrics group exists
+      command: getent group victoriametrics
+      register: group_exists
+      ignore_errors: true
+      changed_when: false
+
+    - name: Add victoriametrics group
+      group:
+        name: victoriametrics
+        system: yes
+      when: group_exists.rc != 0
+
+    - name: Check if victoriametrics user exists
+      command: getent passwd victoriametrics
+      register: user_exists
+      ignore_errors: true
+      changed_when: false
+
+    - name: Add victoriametrics user
+      user:
+        name: victoriametrics
+        group: victoriametrics
+        home: /var/lib/victoriametrics
+        shell: /sbin/nologin
+        system: yes
+      when: user_exists.rc != 0
+
+    - name: Download VictoriaMetrics tarball
+      get_url:
+        url: "https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v{{ vmetrics_version }}/victoria-metrics-linux-amd64-v{{ vmetrics_version }}.tar.gz"
+        dest: "/tmp/victoria-metrics-amd64-v{{ vmetrics_version }}.tar.gz"
+
+    - name: Extract VictoriaMetrics
+      ansible.builtin.unarchive:
+        src: "/tmp/victoria-metrics-amd64-v{{ vmetrics_version }}.tar.gz"
+        dest: "/usr/local/bin/"
+        remote_src: yes
+
+    - name: Change ownership of VictoriaMetrics executable
+      ansible.builtin.file:
+        path: "/usr/local/bin/victoria-metrics-prod"
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Create systemd service file for VictoriaMetrics
+      ansible.builtin.template:
+        src: victoriametrics-systemd.j2
+        dest: "/etc/systemd/system/victoriametrics.service"
+        mode: '0644'
+
+    - name: Create directory for VictoriaMetrics data
+      ansible.builtin.file:
+        path: "/var/lib/victoria-metrics-data"
+        state: directory
+        owner: victoriametrics
+        group: victoriametrics
+
+    - name: Ensure VictoriaMetrics service is started and enabled
+      ansible.builtin.systemd:
+        name: victoriametrics
+        state: started
+        enabled: yes
