@@ -4,6 +4,7 @@
   become: yes
   vars:
     victorialogs_datasource_version: 0.2.3
+    victoriametrics_datasource_ver: 0.1.3
   
   tasks:
     - name: Install required packages 
@@ -29,26 +30,40 @@
         src: templates/grafana-config.j2
         dest: /etc/grafana/grafana.ini
 
-    
     - name: Ensure plugins directory exists
-      file:
+      ansible.builtin.file:
         path: /var/lib/grafana/plugins
         state: directory
-  
-    - name: Download victorialogs-datasource plugin t
+
+    - name: Download victorialogs-datasource plugin
       get_url:
         url: "https://github.com/VictoriaMetrics/victorialogs-datasource/releases/download/v{{ victorialogs_datasource_version }}/victorialogs-datasource-v{{ victorialogs_datasource_version }}.tar.gz"
         dest: "/var/lib/grafana/plugins/victorialogs-datasource-v{{ victorialogs_datasource_version }}.tar.gz"
 
     - name: Extract victorialogs-datasource plugin
-      unarchive:
+      ansible.builtin.unarchive:
         src: "/var/lib/grafana/plugins/victorialogs-datasource-v{{ victorialogs_datasource_version }}.tar.gz"
         dest: "/var/lib/grafana/plugins"
         remote_src: yes
         creates: "/var/lib/grafana/plugins/victorialogs-datasource"
-    
+
     - name: Restart Grafana service
-      service:
+      ansible.builtin.service:
         name: grafana-server
         state: restarted
         enabled: yes
+
+    - name: Download VictoriaMetrics Grafana datasource plugin
+      get_url:
+        url: "https://github.com/VictoriaMetrics/grafana-datasource/releases/download/v{{ victoriametrics_datasource_ver}}/victoriametrics-datasource-v{{ victoriametrics_datasource_ver}}.tar.gz"
+        dest: "/var/lib/grafana/plugins/plugin.tar.gz"
+
+    - name: Extract plugin archive
+      ansible.builtin.command: tar -xf /var/lib/grafana/plugins/plugin.tar.gz -C /var/lib/grafana/plugins/
+      args:
+        creates: "/var/lib/grafana/plugins/victoriametrics-datasource"
+
+    - name: Remove downloaded plugin archive
+      ansible.builtin.file:
+        path: /var/lib/grafana/plugins/plugin.tar.gz
+        state: absent
