@@ -1,6 +1,6 @@
 ---
 - name: Install Grafana
-  hosts: vlogs-bench 
+  hosts: grafana-bench
   become: yes
   vars:
     victorialogs_datasource_version: 0.2.3

@@ -1,6 +1,6 @@
 ---
 - name: install VictoriaMetrics
-  hosts: vlogs-bench
+  hosts: grafana-bench
   become: yes
   vars:
     vmetrics_version: 1.82.1
