@@ -1,6 +1,6 @@
 ---
 - name: Install Telegraf
-  hosts: [vlogs-bench]
+  hosts: [bench-hosts]
   become: yes 
 
   tasks:
