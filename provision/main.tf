@@ -80,6 +80,17 @@ resource "lxd_instance" "loki-bench" {
   }
 }
 
+resource "lxd_instance" "grafana-bench" {
+  name    = "grafana-bench"
+  image   = "ubuntu:22.04"
+  project = "default"
+
+  limits = {
+    cpu    = 2
+    memory = "2GB"
+  }
+}
+
 resource "lxd_instance" "vlogs-bench" {
   name    = "vlogs-bench"
   image   = "ubuntu:22.04"
