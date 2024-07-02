@@ -1,0 +1,43 @@
+---
+- name: Install Telegraf
+  hosts: [vlogs-bench]
+  become: yes 
+
+  tasks:
+
+    - name: Download telegraf
+      get_url:
+        url: "https://dl.influxdata.com/telegraf/releases/telegraf_1.30.0-1_amd64.deb"
+        dest: "/tmp/telegraf_1.30.0-1_amd64.deb"
+  
+    - name: Install package
+      apt:
+        deb: "/tmp/telegraf_1.30.0-1_amd64.deb"
+        state: present
+
+    - name: Ensure Telegraf config directory exists
+      file:
+        path: /etc/telegraf
+        state: directory
+        mode: '0755'
+
+    - name: Copy Telegraf config template
+      template:
+        src: telegraf-conf.j2
+        dest: /etc/telegraf/telegraf.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart telegraf
+
+  handlers:
+    - name: restart telegraf
+      service:
+        name: telegraf
+        state: restarted
+
+    - name: Ensure Telegraf service is started and enabled
+      service:
+        name: telegraf
+        state: started
+        enabled: yes
