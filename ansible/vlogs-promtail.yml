@@ -1,6 +1,6 @@
 ---
 - name: Install promtail
-  hosts: vlogs-bench
+  hosts: loki-host
   become: yes
   vars:
     promtail_version: 3.0.0
@@ -30,8 +30,8 @@
 
     - name: Promtail config file
       ansible.builtin.template:
-        src: promtail-config.j2
-        dest: /usr/local/bin/config-promtail.yml
+        src: vlogs-promtail-config.j2
+        dest: /usr/local/bin/config-promtail.yaml
 
 
     - name: Create promtail user

@@ -1,6 +1,6 @@
 ---
 - name: Setup Victorialogs service
-  hosts: vlogs-bench
+  hosts: vlogs-host
   become: true
   vars:
     victorialogs_group: victoriametrics
