@@ -64,6 +64,10 @@
         state: directory
         owner: victoriametrics
         group: victoriametrics
+    
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: yes
 
     - name: Ensure VictoriaMetrics service is started and enabled
       ansible.builtin.systemd:
