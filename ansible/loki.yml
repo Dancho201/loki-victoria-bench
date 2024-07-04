@@ -1,0 +1,76 @@
+---
+- name: Deploy Loki v3
+  hosts: loki-host
+  become: yes
+  vars:
+    loki_version: "3.0.0"
+    loki_bin_path: "/usr/local/bin/loki"
+    loki_service_path: "/etc/systemd/system/loki.service"
+    loki_config_url: "https://raw.githubusercontent.com/grafana/loki/main/cmd/loki/loki-local-config.yaml"
+    loki_download_url: "https://github.com/grafana/loki/releases/download/v{{ loki_version }}/loki-linux-amd64.zip"
+
+  tasks:
+    - name: Ensure dependencies are installed
+      apt:
+        name: curl, unzip
+        state: present
+
+    - name: Download Loki binary
+      get_url:
+        url: "{{ loki_download_url }}"
+        dest: /opt/loki-linux-amd64.zip
+
+    - name: Unzip Loki binary
+      unarchive:
+        src: /opt/loki-linux-amd64.zip
+        dest: /opt/
+        remote_src: yes
+
+    - name: Move Loki binary to /usr/local/bin
+      command: mv /opt/loki-linux-amd64 {{ loki_bin_path }}
+      args:
+        creates: "{{ loki_bin_path }}"
+
+    - name: Make Loki binary executable
+      file:
+        path: "{{ loki_bin_path }}"
+        mode: '0755'
+
+    - name: Create Loki user and directories
+      user:
+        name: loki
+        system: yes
+
+    - name: Create Loki directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: loki
+        group: loki
+      loop:
+        - /etc/loki
+        - /etc/loki/logs
+        - /mnt/logs
+
+
+    - name: Configure Loki
+      template:
+        src: loki-promtail-config.j2
+        dest: /etc/loki/loki-local-config.yaml
+
+
+    - name: Create systemd service file for Loki
+      template:
+        src: loki-systemd.j2
+        dest: "{{ loki_service_path }}"
+        mode: '0644'
+
+    - name: Enable and start Loki service
+      systemd:
+        name: loki
+        enabled: yes
+        state: started
+
+  handlers:
+    - name: Reload systemd
+      command: systemctl daemon-reload
