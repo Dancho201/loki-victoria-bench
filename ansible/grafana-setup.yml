@@ -3,7 +3,7 @@
   hosts: grafana-bench
   become: yes
   vars:
-    victorialogs_datasource_version: 0.2.3
+    victorialogs_datasource_version: 0.2.4
     victoriametrics_datasource_ver: 0.1.3
   
   tasks:
