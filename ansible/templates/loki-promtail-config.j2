@@ -15,4 +15,21 @@ scrape_configs:
           - localhost
         labels:
           job: syslog
-          __path__: /var/log/syslog            
+          __path__: /var/log/syslog      
+
+
+  - job_name: nginx
+    static_configs:
+      - targets:
+         - localhost
+        labels:
+          job: nginx
+          __path__: /var/log/nginx/*.log
+
+  - job_name: hdfs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: hdfs
+          __path__: /var/log/hdfs/*.log
