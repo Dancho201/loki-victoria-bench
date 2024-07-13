@@ -1,6 +1,6 @@
 ---
 - name: Install Netdata On-Prem Version
-  hosts: all
+  hosts: vlogs-host, loki-host
   become: yes
   tasks:
     - name: Install wget
@@ -16,24 +16,10 @@
         mode: '0755'
 
     - name: Prepare for offline install
-      shell: sh /tmp/netdata-kickstart.sh --prepare-offline-install-source /tmp/netdata-offline
-      args:
-        creates: /tmp/netdata-offline
-
-    - name: Install Netdata from offline source
-      shell: sh /tmp/netdata-offline/netdata-installer.sh --dont-wait
+      shell: bash /tmp/netdata-kickstart.sh 
 
     - name: Enable and start Netdata service
       systemd:
         name: netdata
         enabled: yes
         state: started
-
-    - name: Allow Netdata default port through the firewall
-      ufw:
-        rule: allow
-        port: 19999
-        proto: tcp
-        state: enabled
-        name: 'Netdata'
-      when: ansible_facts['os_family'] == "Debian"  # Ensure UFW is used only on Debian-based systems
