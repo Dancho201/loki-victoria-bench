@@ -1,0 +1,14 @@
+---
+- name: Generate logs
+  hosts: vlogs-host, loki-host
+  become: yes
+  tasks:
+    - name: Copy script to bench machines
+      copy:
+        src: ./log-download.sh
+        dest: /tmp/log-download.sh
+        mode: '0755'
+
+    - name: Execute script on bench machines
+      command: bash /tmp/log-download.sh    
+    
