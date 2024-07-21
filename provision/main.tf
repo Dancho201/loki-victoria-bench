@@ -16,7 +16,7 @@ resource "lxd_volume" "vlogs_root" {
   name    = "root_volume_vlogs"
   pool    = "default"
   config  = {
-    size = "15GB"
+    size = "35GB"
   }
   project = "default"
 }
@@ -34,7 +34,7 @@ resource "lxd_volume" "loki_root" {
   name    = "root_volume_loki"
   pool    = "default"
   config  = {
-    size = "15GB"
+    size = "35GB"
   }
   project = "default"
 }
