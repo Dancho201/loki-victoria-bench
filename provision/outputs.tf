@@ -8,7 +8,7 @@ output "grafana-bench_ip" {
   
 }
 
-output "lok_bench_ip" {
+output "loki_bench_ip" {
   value = lxd_instance.loki-bench.ipv4_address
   
 } 
