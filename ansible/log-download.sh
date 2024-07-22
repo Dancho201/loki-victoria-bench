@@ -2,7 +2,7 @@
 
 set -ex
 
-LOG_DIR="/var/bench-logs"
+LOG_DIR="/var/logs/bench-logs"
 mkdir -p "$LOG_DIR"
 
 declare -A files=(
