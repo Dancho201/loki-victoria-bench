@@ -1,8 +1,10 @@
 ---
 - import_playbook: vlogs-setup.yml
 - import_playbook: grafana-setup.yml
-- import_playbook: promtail-setup.yml
+- import_playbook: vlogs-promtail.yml
+- import_playbook: loki-promtail.yml
 - import_playbook: victoriametrics-setup.yml
 - import_playbook: telegraf.yml
 - import_playbook: loki.yml
+- import_playbook: netdata.yml
 ####
