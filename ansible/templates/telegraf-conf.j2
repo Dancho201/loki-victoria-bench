@@ -14,7 +14,7 @@
   omit_hostname = false
 
 [[outputs.influxdb]]
-  urls = ["http://127.0.0.1:8428"]
+  urls = ["http://10.10.123.93:8428"]
   database = "telegraf"
   username = "telegraf"
   password = "metricsmetricsmetricsmetrics"
@@ -35,9 +35,6 @@
 [[inputs.swap]]
 [[inputs.system]]
 
-[[inputs.apache]]
-  urls = ["http://localhost/server-status?auto"]
-  response_timeout = "5s"
 
 [[inputs.net]]
 [[inputs.procstat]]
@@ -56,9 +53,7 @@
   allowed_pending_messages = 10000
   percentile_limit = 1000
 
-[[inputs.tail]]
-  files = ["/var/log/mymetrics.out"]
-  name_override = "apache2log"
-  from_beginning = true
-  data_format = "grok"
-
+[[inputs.http]]
+  urls = ["http://localhost:19999/api/v1/allmetrics?format=prometheus"]
+  name_prefix = "netdata_"
+  data_format = "prometheus"

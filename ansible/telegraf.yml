@@ -1,6 +1,6 @@
 ---
 - name: Install Telegraf
-  hosts: [bench-hosts]
+  hosts: vlogs-host, loki-host
   become: yes 
 
   tasks:
