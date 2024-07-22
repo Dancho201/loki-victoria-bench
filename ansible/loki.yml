@@ -55,7 +55,7 @@
 
     - name: Configure Loki
       template:
-        src: loki-promtail-config.j2
+        src: loki-config.j2
         dest: /etc/loki/loki-local-config.yaml
 
 
@@ -70,7 +70,7 @@
         name: loki
         enabled: yes
         state: started
-
-  handlers:
-    - name: Reload systemd
-      command: systemctl daemon-reload
+        
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: yes
