@@ -12,11 +12,11 @@ provider "lxd" {
 }
 
 
-resource "lxd_volume" "vlogs_root" {
-  name    = "root_volume_vlogs"
+resource "lxd_volume" "vlogs_var" {
+  name    = "vlogs_var"
   pool    = "default"
   config  = {
-    size = "35GB"
+    size = "30GB"
   }
   project = "default"
 }
@@ -30,11 +30,11 @@ resource "lxd_volume" "vlogs_logs" {
   project = "default"
 }
 
-resource "lxd_volume" "loki_root" {
-  name    = "root_volume_loki"
+resource "lxd_volume" "loki_var" {
+  name    = "loki_var"
   pool    = "default"
   config  = {
-    size = "35GB"
+    size = "30GB"
   }
   project = "default"
 }
@@ -56,10 +56,11 @@ resource "lxd_instance" "loki-bench" {
   project = "default"
 
   device {
-    name = "root"
+    name = "loki_var"
     type = "disk"
     properties = {
-      path = "/"
+      path = "/var/logs"
+      source = lxd_volume.loki_var.name
       pool = "default"
     }
   }
@@ -103,11 +104,12 @@ resource "lxd_instance" "vlogs-bench" {
   }
 
   device {
-    name = "root"
+    name = "vlogs_var"
     type = "disk"
     properties = {
-      path = "/"
+      path = "/var/logs"
       pool = "default"
+      source = lxd_volume.vlogs_var.name
     }
   }
 
