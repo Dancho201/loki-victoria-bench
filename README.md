@@ -1,5 +1,10 @@
 # VictoriaLogs and Loki benchmarks
 
+## Setup 
+
+![alt text](Setup.png)
+
+
 
 ## Results
 
