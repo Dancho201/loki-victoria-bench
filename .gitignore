@@ -4,3 +4,4 @@
 .terraform.lock.hcl
 inventory.ini
 ansible.cfg
+*.png.bkp
