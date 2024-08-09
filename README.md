@@ -15,3 +15,5 @@ root@vlogs-bench:/var/logs# du -shx *
 
 ![alt text](Results.png)
 
+
+
