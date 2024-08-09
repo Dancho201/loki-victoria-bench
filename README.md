@@ -17,3 +17,6 @@ root@vlogs-bench:/var/logs# du -shx *
 
 
 
+
+
+
